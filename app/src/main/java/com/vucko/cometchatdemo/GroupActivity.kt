@@ -1,33 +1,39 @@
 package com.vucko.cometchatdemo
 
 import android.os.Bundle
+import android.os.Handler
 import android.text.TextUtils
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cometchat.pro.constants.CometChatConstants
 import com.cometchat.pro.core.CometChat
-import com.cometchat.pro.core.GroupsRequest
+import com.cometchat.pro.core.CometChat.endTyping
+import com.cometchat.pro.core.CometChat.startTyping
 import com.cometchat.pro.core.MessagesRequest
 import com.cometchat.pro.exceptions.CometChatException
-import com.cometchat.pro.models.BaseMessage
-import com.cometchat.pro.models.Group
-import com.cometchat.pro.models.MediaMessage
-import com.cometchat.pro.models.TextMessage
+import com.cometchat.pro.models.*
 
 class GroupActivity : AppCompatActivity() {
 
+    private val stopTypingRunnable: Runnable = Runnable { endTyping() }
+    // Used to determine after how much time user will be declared as no longer typing (in milliseconds)
+    private val TYPING_DELAY: Long = 5000
+    private val TYPING_THRESHOLD_TEXT = 2
     lateinit var messagesRecyclerView: RecyclerView
     lateinit var messageEditText: EditText
     lateinit var sendButton: ImageButton
     lateinit var noMessagesGroup: androidx.constraintlayout.widget.Group
+    lateinit var typingLayout: LinearLayout
+    lateinit var typingTextView: TextView
+    val currentlyTyping: MutableList<User?> = ArrayList()
+    var isTyping = false
+
+    val typingHandler = Handler()
     var group: Group? = null
 
     lateinit var messagesAdapter: MessagesAdapter
@@ -35,6 +41,7 @@ class GroupActivity : AppCompatActivity() {
 
     // Some random ID for the listener for now
     private val listenerID: String = "1234"
+    private val typingListenerId: String = "TypingListener 1"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +51,8 @@ class GroupActivity : AppCompatActivity() {
         messagesRecyclerView = findViewById(R.id.messagesRecyclerView)
         messageEditText = findViewById(R.id.messageEditText)
         sendButton = findViewById(R.id.sendButton)
+        typingLayout = findViewById(R.id.typingLayout)
+        typingTextView = findViewById(R.id.typingTextView)
 
         sendButton.setOnClickListener {
             attemptSendMessage()
@@ -54,15 +63,94 @@ class GroupActivity : AppCompatActivity() {
         messagesRecyclerView.adapter = messagesAdapter
         messagesRecyclerView.layoutManager = LinearLayoutManager(this)
         noMessagesGroup = findViewById(R.id.noMessagesGroup)
-        messageEditText.setOnEditorActionListener {
-                _, actionId, _ ->
-            if(actionId == EditorInfo.IME_ACTION_SEND){
+        messageEditText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEND) {
                 attemptSendMessage()
                 true
             } else {
                 false
             }
         }
+        messageEditText.setOnKeyListener { _, _, _ ->
+            startTypingTimer()
+            true
+        }
+    }
+
+    private fun setTypingListener() {
+        CometChat.addMessageListener(typingListenerId, object : CometChat.MessageListener() {
+            override fun onTypingEnded(typingIndicator: TypingIndicator?) {
+                removeTypingUser(typingIndicator?.sender)
+            }
+
+            override fun onTypingStarted(typingIndicator: TypingIndicator?) {
+                addTypingUser(typingIndicator?.sender)
+            }
+
+        })
+    }
+
+    private fun addTypingUser(user: User?) {
+        for(u in currentlyTyping){
+            if(u?.uid == user?.uid){
+                return
+            }
+        }
+        currentlyTyping.add(user)
+        notifyTypingChanged()
+    }
+
+    private fun removeTypingUser(user: User?) {
+        for(u in currentlyTyping){
+            if(u?.uid == user?.uid){
+                currentlyTyping.remove(u)
+            }
+        }
+        notifyTypingChanged()
+    }
+
+    private fun notifyTypingChanged() {
+        if(currentlyTyping.size == 0){
+            typingLayout.visibility = View.GONE
+        } else {
+
+            messagesRecyclerView.smoothScrollToPosition(messagesAdapter.itemCount - 1)
+            typingLayout.visibility = View.VISIBLE
+            formatTypingMessage(currentlyTyping)
+        }
+    }
+
+    private fun formatTypingMessage(currentlyTyping: MutableList<User?>) {
+        if(currentlyTyping.size >= TYPING_THRESHOLD_TEXT) {
+            typingTextView.text = "Several people are typing"
+        } else {
+            if(currentlyTyping.size == 1){
+                typingTextView.text = currentlyTyping[0]?.name + " is typing"
+            } else {
+                typingTextView.text = currentlyTyping[0]?.name  + " and " + currentlyTyping[1]?.name + " are typing"
+            }
+        }
+    }
+
+    private fun startTypingTimer() {
+        if(!isTyping) {
+            startTyping()
+        }
+        isTyping = true
+        typingHandler.removeCallbacks(stopTypingRunnable)
+        typingHandler.postDelayed(stopTypingRunnable, TYPING_DELAY)
+    }
+
+    private fun startTyping() {
+        val typingIndicator = TypingIndicator(group!!.guid, CometChatConstants.RECEIVER_TYPE_GROUP)
+        CometChat.startTyping(typingIndicator)
+    }
+
+    private fun endTyping() {
+        val typingIndicator = TypingIndicator(group!!.guid, CometChatConstants.RECEIVER_TYPE_GROUP)
+        CometChat.endTyping(typingIndicator)
+        isTyping = false
+        typingHandler.removeCallbacks(stopTypingRunnable)
     }
 
     private fun getGroupDetailsAndMessages() {
@@ -81,7 +169,7 @@ class GroupActivity : AppCompatActivity() {
             }
         })
         val messagesRequest = MessagesRequest.MessagesRequestBuilder().setGUID(groupId).build()
-        messagesRequest.fetchPrevious(object:CometChat.CallbackListener<List<BaseMessage>>(){
+        messagesRequest.fetchPrevious(object : CometChat.CallbackListener<List<BaseMessage>>() {
             override fun onSuccess(p0: List<BaseMessage>?) {
                 if (!p0.isNullOrEmpty()) {
                     for (baseMessage in p0) {
@@ -90,8 +178,8 @@ class GroupActivity : AppCompatActivity() {
                         }
                     }
                 }
-
             }
+
             override fun onError(p0: CometChatException?) {
                 Toast.makeText(this@GroupActivity, p0?.message, Toast.LENGTH_SHORT).show()
             }
@@ -117,6 +205,7 @@ class GroupActivity : AppCompatActivity() {
             CometChat.sendMessage(textMessage, object : CometChat.CallbackListener<TextMessage>() {
                 override fun onSuccess(p0: TextMessage?) {
                     addMessage(p0)
+                    endTyping()
                 }
 
                 override fun onError(p0: CometChatException?) {
@@ -136,6 +225,7 @@ class GroupActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        setTypingListener()
         // Add the listener to listen for incoming messages in this screen
         CometChat.addMessageListener(listenerID, object : CometChat.MessageListener() {
 
@@ -153,6 +243,7 @@ class GroupActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         CometChat.removeMessageListener(listenerID)
+        CometChat.removeMessageListener(typingListenerId)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

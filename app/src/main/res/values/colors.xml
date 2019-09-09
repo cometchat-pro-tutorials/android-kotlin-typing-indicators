@@ -12,5 +12,6 @@
     <color name="color_light_blue_darker">#BDCCD7</color>
     <color name="color_light_blue_darker_transparent">#1ABDCCD7</color>
     <color name="color_light_blue">#ECF0FE</color>
+    <color name="typing_text_color">#333333</color>
 
 </resources>
