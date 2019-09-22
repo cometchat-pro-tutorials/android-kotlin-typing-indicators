@@ -12,20 +12,36 @@
         android:src="@drawable/avatar_placeholder"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline80"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.8"/>
 
-    <TextView
-        android:id="@+id/messageTextView"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/others_chat_bubble"
-        android:gravity="center_vertical"
-        android:maxWidth="250dp"
-        android:text="Just some placeholder that has more than one line and is a little bit longer because we have to test the chat bubble"
-        android:textColor="@android:color/black"
-        android:textSize="14sp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="@id/avatarImageView"
-        app:layout_constraintHorizontal_bias="0.05"
         app:layout_constraintLeft_toRightOf="@id/avatarImageView"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="@id/guideline80"
+        android:background="@drawable/others_chat_bubble"
+        android:maxWidth="250dp">
+        <TextView
+            android:id="@+id/senderNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/main_blue_color"
+            android:text="Marco"/>
+        <TextView
+            android:id="@+id/messageTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="Just some placeholder that has more than one line and is a little bit longer because we have to test the chat bubble"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"/>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

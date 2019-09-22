@@ -26,7 +26,6 @@ class GroupActivity : AppCompatActivity() {
     private val TYPING_THRESHOLD_TEXT = 2
     lateinit var messagesRecyclerView: RecyclerView
     lateinit var messageEditText: EditText
-    lateinit var sendButton: ImageButton
     lateinit var noMessagesGroup: androidx.constraintlayout.widget.Group
     lateinit var typingLayout: LinearLayout
     lateinit var typingTextView: TextView
@@ -50,13 +49,8 @@ class GroupActivity : AppCompatActivity() {
 
         messagesRecyclerView = findViewById(R.id.messagesRecyclerView)
         messageEditText = findViewById(R.id.messageEditText)
-        sendButton = findViewById(R.id.sendButton)
         typingLayout = findViewById(R.id.typingLayout)
         typingTextView = findViewById(R.id.typingTextView)
-
-        sendButton.setOnClickListener {
-            attemptSendMessage()
-        }
 
         getGroupDetailsAndMessages()
         messagesAdapter = MessagesAdapter(ArrayList(), this)
@@ -111,7 +105,7 @@ class GroupActivity : AppCompatActivity() {
 
     private fun notifyTypingChanged() {
         if(currentlyTyping.size == 0){
-            typingLayout.visibility = View.GONE
+            typingLayout.visibility = View.INVISIBLE
         } else {
 
             messagesRecyclerView.smoothScrollToPosition(messagesAdapter.itemCount - 1)

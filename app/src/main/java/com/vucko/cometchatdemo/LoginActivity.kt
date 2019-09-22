@@ -2,12 +2,13 @@ package com.vucko.cometchatdemo
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.inputmethod.EditorInfo
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import com.cometchat.pro.constants.CometChatConstants.Params.UID
 import com.cometchat.pro.core.CometChat
 import com.cometchat.pro.exceptions.CometChatException
+import com.cometchat.pro.models.Group
 import com.cometchat.pro.models.User
 
 class LoginActivity : AppCompatActivity() {
@@ -39,7 +40,7 @@ class LoginActivity : AppCompatActivity() {
         val UID = usernameEditText.text.toString()
         CometChat.login(UID, GeneralConstants.API_KEY, object : CometChat.CallbackListener<User>() {
             override fun onSuccess(user: User?) {
-                redirectToMainScreen()
+                redirectToSuperGroup()
             }
 
             override fun onError(p0: CometChatException?) {
@@ -59,8 +60,28 @@ class LoginActivity : AppCompatActivity() {
         loginButton.isEnabled = true
     }
 
-    private fun redirectToMainScreen() {
-        val intent = Intent(this, MainActivity::class.java)
+    private fun redirectToSuperGroup() {
+        getSuperGroupDetails()
+    }
+
+    private fun getSuperGroupDetails() {
+        // We want to automatically join the already existing group with guid 'supergroup'
+        val GUID:String="supergroup"
+
+        CometChat.getGroup(GUID,object :CometChat.CallbackListener<Group>(){
+            override fun onSuccess(p0: Group?) {
+                goToGroupScreen(p0!!)
+                normalButtonState()
+            }
+            override fun onError(p0: CometChatException?) {
+
+            }
+        })
+    }
+
+    private fun goToGroupScreen(group: Group) {
+        val intent = Intent(this, GroupActivity::class.java)
+        intent.putExtra("group_id", group.guid)
         startActivity(intent)
     }
 }

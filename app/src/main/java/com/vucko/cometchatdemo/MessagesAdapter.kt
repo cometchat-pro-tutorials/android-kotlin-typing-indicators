@@ -10,7 +10,9 @@ import com.bumptech.glide.Glide
 import com.cometchat.pro.core.CometChat
 import com.cometchat.pro.models.TextMessage
 import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.android.synthetic.main.my_message_layout.view.*
+import kotlinx.android.synthetic.main.my_message_layout.view.avatarImageView
+import kotlinx.android.synthetic.main.my_message_layout.view.messageTextView
+import kotlinx.android.synthetic.main.others_message_layout.view.*
 
 
 class MessagesAdapter(var messages: MutableList<TextMessage?>, val context: Context) :
@@ -36,8 +38,10 @@ class MessagesAdapter(var messages: MutableList<TextMessage?>, val context: Cont
 
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
         holder.messageTextView.text = messages[position]?.text
+        holder.senderNameTextView.text = messages[position]?.sender?.name
         // Check if the sender is the current user
-        Glide.with(context).load(GeneralConstants.AVATARS_URL + messages[position]?.sender?.name).into(holder.avatarImageView)
+        Glide.with(context).load(GeneralConstants.AVATARS_URL + messages[position]?.sender?.name)
+            .into(holder.avatarImageView)
     }
 
     private fun isCurrentUserMessage(message: TextMessage?): Boolean {
@@ -54,5 +58,6 @@ class MessagesAdapter(var messages: MutableList<TextMessage?>, val context: Cont
 
 class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val messageTextView: TextView = itemView.messageTextView
+    val senderNameTextView: TextView = itemView.senderNameTextView
     val avatarImageView: CircleImageView = itemView.avatarImageView
 }

@@ -12,6 +12,15 @@
         android:src="@drawable/avatar_placeholder_female"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
+    <TextView
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:visibility="gone"
+        android:id="@+id/senderNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/main_blue_color"
+        android:text="Marco"/>
 
     <TextView
         android:id="@+id/messageTextView"

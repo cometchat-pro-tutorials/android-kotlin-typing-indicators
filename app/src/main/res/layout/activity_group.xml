@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:animateLayoutChanges="true"
+    android:background="@android:color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,7 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:padding="16dp"
-        app:layout_constraintBottom_toTopOf="@id/messageEditText"
+        android:background="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@id/typingLayout"
         app:layout_constraintTop_toTopOf="parent"
         app:stackFromEnd="true" />
 
@@ -63,7 +65,7 @@
         android:background="#B4B4B4"
         app:layout_constraintBottom_toTopOf="@id/messageEditText" />
     <LinearLayout
-        android:visibility="gone"
+        android:visibility="invisible"
         android:id="@+id/typingLayout"
         android:padding="@dimen/standard_padding"
         app:layout_constraintBottom_toTopOf="@id/messageEditText"
@@ -108,17 +110,6 @@
         android:inputType="text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/sendButton" />
-
-    <ImageButton
-        android:id="@+id/sendButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
-        android:background="@android:color/transparent"
-        android:src="@drawable/send_icon"
-        app:layout_constraintBottom_toBottomOf="@id/messageEditText"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/messageEditText" />
+        app:layout_constraintRight_toRightOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
