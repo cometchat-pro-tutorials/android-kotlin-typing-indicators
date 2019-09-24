@@ -8,6 +8,9 @@
         <item name="colorPrimary">@android:color/white</item>
         <item name="colorPrimaryDark">@android:color/white</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:colorBackground">@android:color/white</item>
     </style>
     <style name="AppThemeNoToolbar" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
