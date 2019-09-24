@@ -96,11 +96,7 @@ class GroupActivity : AppCompatActivity() {
     }
 
     private fun removeTypingUser(user: User?) {
-        for (u in currentlyTyping) {
-            if (u?.uid == user?.uid) {
-                currentlyTyping.remove(u)
-            }
-        }
+        currentlyTyping.removeIf {it?.uid == user?.uid }
         notifyTypingChanged()
     }
 
