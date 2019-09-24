@@ -6,14 +6,15 @@ import android.text.TextUtils
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.*
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cometchat.pro.constants.CometChatConstants
 import com.cometchat.pro.core.CometChat
-import com.cometchat.pro.core.CometChat.endTyping
-import com.cometchat.pro.core.CometChat.startTyping
 import com.cometchat.pro.core.MessagesRequest
 import com.cometchat.pro.exceptions.CometChatException
 import com.cometchat.pro.models.*
@@ -85,8 +86,8 @@ class GroupActivity : AppCompatActivity() {
     }
 
     private fun addTypingUser(user: User?) {
-        for(u in currentlyTyping){
-            if(u?.uid == user?.uid){
+        for (u in currentlyTyping) {
+            if (u?.uid == user?.uid) {
                 return
             }
         }
@@ -95,8 +96,8 @@ class GroupActivity : AppCompatActivity() {
     }
 
     private fun removeTypingUser(user: User?) {
-        for(u in currentlyTyping){
-            if(u?.uid == user?.uid){
+        for (u in currentlyTyping) {
+            if (u?.uid == user?.uid) {
                 currentlyTyping.remove(u)
             }
         }
@@ -104,7 +105,7 @@ class GroupActivity : AppCompatActivity() {
     }
 
     private fun notifyTypingChanged() {
-        if(currentlyTyping.size == 0){
+        if (currentlyTyping.size == 0) {
             typingLayout.visibility = View.INVISIBLE
         } else {
 
@@ -115,19 +116,19 @@ class GroupActivity : AppCompatActivity() {
     }
 
     private fun formatTypingMessage(currentlyTyping: MutableList<User?>) {
-        if(currentlyTyping.size >= TYPING_THRESHOLD_TEXT) {
+        if (currentlyTyping.size >= TYPING_THRESHOLD_TEXT) {
             typingTextView.text = "Several people are typing"
         } else {
-            if(currentlyTyping.size == 1){
+            if (currentlyTyping.size == 1) {
                 typingTextView.text = currentlyTyping[0]?.name + " is typing"
             } else {
-                typingTextView.text = currentlyTyping[0]?.name  + " and " + currentlyTyping[1]?.name + " are typing"
+                typingTextView.text = currentlyTyping[0]?.name + " and " + currentlyTyping[1]?.name + " are typing"
             }
         }
     }
 
     private fun startTypingTimer() {
-        if(!isTyping) {
+        if (!isTyping) {
             startTyping()
         }
         isTyping = true
@@ -221,6 +222,10 @@ class GroupActivity : AppCompatActivity() {
         super.onResume()
         setTypingListener()
         // Add the listener to listen for incoming messages in this screen
+        setIncomingMessageListener()
+    }
+
+    private fun setIncomingMessageListener() {
         CometChat.addMessageListener(listenerID, object : CometChat.MessageListener() {
 
             override fun onTextMessageReceived(message: TextMessage?) {
