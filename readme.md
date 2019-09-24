@@ -1,6 +1,6 @@
-# Android group chat using CometChat
+# Android group chat using CometChat with typing indicators
 
-This demo app is displaying how to easily implement group chat in your Android app using CometChat pro SDK
+This demo app is displaying how to easily implement group chat with typing indicators in your Android app using CometChat pro SDK
 
 ![The screenshot](https://github.com/cometchat-pro-tutorials/android-kotlin-typing-indicators/blob/master/screenshots/cometchat_screenshot.png "Screenshot of the app in action")
 
