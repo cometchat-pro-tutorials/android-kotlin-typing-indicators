@@ -2,8 +2,8 @@ package com.vucko.cometchatdemo
 
 
 object GeneralConstants{
-    const val API_KEY = "07c088a34071093837310ec0fae0801c67a8bbfc"
-    const val APP_ID = "12820f0a11ac463"
+    const val API_KEY = "ba2788473632143c928cdfa6300202d8b3389d27"
+    const val APP_ID = "15116ef1abf7f5c"
     const val REGION= "eu"
     const val AVATARS_URL = "https://ui-avatars.com/api/?name="
     const val MY_MESSAGE: Int = 0
