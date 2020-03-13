@@ -13,9 +13,6 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        ndk {
-            abiFilters "armeabi-v7a", "x86"
-        }
     }
     buildTypes {
         release {
@@ -42,7 +39,7 @@ dependencies {
     // Loading dots for the typing... part
     implementation 'com.eyalbira.loadingdots:loading-dots:1.0.2'
 
-    implementation 'com.cometchat:pro-android-chat-sdk:1.8.+'
+    implementation 'com.cometchat:pro-android-chat-sdk:2.0.4-beta1'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'

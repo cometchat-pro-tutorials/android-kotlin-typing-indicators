@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.inputmethod.EditorInfo
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.cometchat.pro.core.AppSettings
 import com.cometchat.pro.core.CometChat
 import com.cometchat.pro.exceptions.CometChatException
 import com.cometchat.pro.models.Group
@@ -38,6 +39,8 @@ class LoginActivity : AppCompatActivity() {
     private fun attemptLogin() {
         loggingInButtonState()
         val UID = usernameEditText.text.toString()
+
+
         CometChat.login(UID, GeneralConstants.API_KEY, object : CometChat.CallbackListener<User>() {
             override fun onSuccess(user: User?) {
                 redirectToSuperGroup()
